@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class Main {
         filteredProductsBaby.forEach(product -> System.out.println(product));
 
         List<Product> filteredProductsBoys = products.stream()
-                .filter(product -> "Boys".equals(product.getCategory()))  // Filtra i prodotti della categoria "Boys"
+                .filter(product -> "Boys".equals(product.getCategory()))
                 .map(product -> {
                     // Applichiamo lo sconto del 10% sul prezzo del prodotto
                     product.setPrice(product.getPrice() * 0.9);
@@ -53,6 +54,31 @@ public class Main {
         System.out.println("Prodotti nella categoria Boys con sconto 10% del prezzo originale:");
         System.out.println();
         filteredProductsBoys.forEach(product -> System.out.println(product));
+
+        List<Order> orders = List.of(
+                new Order(1L, "Pending", LocalDate.of(2024, 1, 3), List.of(products.get(0), products.get(1)), new Customer(1L, "Frodo", 2)),
+                new Order(2L, "Delivered", LocalDate.of(2021, 5, 7), List.of(products.get(2), products.get(3)), new Customer(2L, "Gandalf", 2)),
+                new Order(3L, "Pending", LocalDate.of(2023, 8, 5), List.of(products.get(4), products.get(5)), new Customer(3L, "Aragon", 3)),
+                new Order(4L, "Delivered", LocalDate.of(2021, 2, 3), List.of(products.get(6), products.get(7)), new Customer(4L, "Legolas", 1)),
+                new Order(5L, "Pending", LocalDate.of(2021, 2, 3), List.of(products.get(8), products.get(9)), new Customer(5L, "Ghimili", 2)),
+                new Order(6L, "Delivered", LocalDate.of(2021, 2, 3), List.of(products.get(10), products.get(11)), new Customer(6L, "Set", 3))
+        );
+
+        LocalDate startDate = LocalDate.of(2021, 2, 1);
+        LocalDate endDate = LocalDate.of(2021, 4, 1);
+
+        List<Product> productsOrderedByTier2Customers = orders.stream()
+                .filter(order -> order.getOrderDate() != null)
+                .filter(order -> !order.getOrderDate().isBefore(startDate) && !order.getOrderDate().isAfter(endDate))
+                .filter(order -> order.getCustomer().getTier() == 2)
+                .flatMap(order -> order.getProducts().stream())
+                .collect(Collectors.toList());
+
+
+        System.out.println();
+        System.out.println("Prodotti ordinati da clienti di tier 2 tra Febbraio e Aprile 2021:");
+        System.out.println();
+        productsOrderedByTier2Customers.forEach(Product -> System.out.println(Product));
 
 
     }
